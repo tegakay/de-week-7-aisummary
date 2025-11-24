@@ -27,9 +27,12 @@ def main():
     # #step 3 to 6
     # #load to processed sheet
     data_to_process = ecommerce.transform_data(cleaned_data)
+
     ecommerce.load_to_gsheet(data_to_process, worksheet_name="processed")
     #step 7
     sentiment_class = ecommerce.group_sort(data_to_process)
+    #calculate positive, negative, neutral counts
+    other_sentiments = ecommerce.get_sentiment( data_to_process)
 
 
 

@@ -6,6 +6,7 @@ import os
 from dotenv import load_dotenv
 from groq import Groq
 import time
+import json
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="Utils INFO: %(message)s")
@@ -107,10 +108,13 @@ def send_to_groq(prompt: str) -> str:
         model="openai/gpt-oss-20b",
         )
         logging.info(chat_completion.choices[0].message.content)
-        return chat_completion.choices[0].message.content   
+        data = json.loads(chat_completion.choices[0].message.content)
+        ai_sentiment = data.get("AI Sentiment")
+        ai_summary = data.get("AI Summary")
+        return ai_sentiment, ai_summary
     except Exception as e:
         logging.error(f"Error communicating with Groq: {e}")
-        raise
+        return None, None
 
 def summarize_to_groq(prompt: str) -> str:
     """Send a prompt to Groq and return the response."""
@@ -130,7 +134,7 @@ def summarize_to_groq(prompt: str) -> str:
 
 
 
-print(send_to_groq("This product is great! I loved using it every day."))
+# print(send_to_groq("This product is great! I loved using it every day."))
 
 
 

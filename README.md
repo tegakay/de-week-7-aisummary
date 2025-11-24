@@ -15,3 +15,15 @@ This dataset contains customer reviews along with multiple metadata fields. Revi
 
 # Images
 ![Raw Data before etl pipeline is run](images/raw_data.png)
+
+![Processed Data after etl pipeline is run](images/processed.png)
+
+Other analysis files can be located in the reports folder
+
+# How to reproduce
+1. ensure you have poetry installed on your pc.
+2. clone or download the repo
+3. open the project folder
+4. run the command poetry install
+5. wait a few minutes for setup to complete
+6. run the command poetry run ecom-pipeline

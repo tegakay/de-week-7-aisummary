@@ -126,8 +126,8 @@ class EcommerceETL:
         try:
             # df['AI Sentiment'] = df['Review Text'].apply(self.analyze_sentiments) #time.sleep
             # df["AI Summary"] = df['Review Text'].apply(self.summarize_review)
-            # df[['AI Sentiment', 'AI Summary']] =   df['Review Text'].apply(self.analyze_sentiments).apply(pd.Series)
-            df.loc[:9, ['AI Sentiment', 'AI Summary']] =   df.loc[:9, 'Review Text'].apply(self.analyze_sentiments).apply(pd.Series)
+            df[['AI Sentiment', 'AI Summary']] =   df['Review Text'].apply(self.analyze_sentiments).apply(pd.Series)
+            # df.loc[:9, ['AI Sentiment', 'AI Summary']] =   df.loc[:9, 'Review Text'].apply(self.analyze_sentiments).apply(pd.Series)
             df["Action Needed?"] = df['AI Summary'].apply(lambda x: 'Yes' if x == 'Negative' else 'No')
             logging.info(f"Data transformation complete.{df.head(12)}"  )
             return df
@@ -147,18 +147,31 @@ class EcommerceETL:
             return ''
         return summarize_to_groq(text)
         
-    def group_sort( self, df:pd.DataFrame) ->  pd.DataFrame:
+    def group_sort( self, df:pd.DataFrame, early:bool = False) ->  pd.DataFrame:
         """Group and sort the DataFrame by a specified key."""
         result = df.groupby('Class Name')["AI Sentiment"].count().reset_index(name="count").sort_values("count", ascending=False)
+        if early:
+            return result
         plot_sentiment_distribution(result, file_name="sentiment_distribution.png")
         return df
     
-    def get_sentiment(self, sentiment: str, df:pd.DataFrame) -> pd.DataFrame:
+    def get_sentiment(self, df:pd.DataFrame) -> pd.DataFrame:
         """Get reviews by sentiment."""
+        df = df[df["AI Sentiment"].notna()]
+        df = df[df["AI Sentiment"].str.strip() != ""]
         for i in df["AI Sentiment"].unique():
+            if pd.isna(i) or str(i).strip() == "":
+                continue
+        try:
             result = df[df["AI Sentiment"] == i]
-            df = self.group_sort( result)
+            df = self.group_sort(result,True)
             plot_sentiment_distribution(df, file_name=f"{i}_sentiment_distribution.png")
+        except Exception as e:
+            logging.error(f"Error getting sentiment {i}: {e}")
+            
+            
+
+            
         
 
 
