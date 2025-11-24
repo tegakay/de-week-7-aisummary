@@ -8,6 +8,13 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "pandas (>=2.3.3,<3.0.0)",
+    "gspread (>=6.2.1,<7.0.0)",
+    "google-auth (>=2.43.0,<3.0.0)",
+    "python-dotenv (>=1.2.1,<2.0.0)",
+    "openai (>=2.8.1,<3.0.0)",
+    "groq (>=0.36.0,<0.37.0)",
+    "matplotlib (>=3.10.7,<4.0.0)"
 ]
 
 [tool.poetry]
@@ -16,3 +23,6 @@ packages = [{include = "automated_review_analysis", from = "src"}]
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+ecom-pipeline = "automated_review_analysis.main:main"
